@@ -54,7 +54,7 @@ class User(AbstractUser):
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
 
-    
+
     objects = UserManager()
 
     def __str__(self):
