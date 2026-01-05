@@ -10,6 +10,6 @@ class Comment(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
     ad = models.ForeignKey('ads.Ad', on_delete=models.CASCADE, verbose_name="Related Ad", related_name="comments")
-    provider = models.ForeignKey("accounts.Users", on_delete=models.CASCADE, verbose_name="Provider", related_name="comments")
+    provider = models.ForeignKey("accounts.User", on_delete=models.CASCADE, verbose_name="Provider", related_name="comments")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
 
