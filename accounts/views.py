@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView , TokenRefreshVie
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg, Count, Q
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 import re
 from .serializers import *
 from .filters import ContractorFilter
@@ -26,6 +27,15 @@ class UserRegisterView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
 
 
+    @extend_schema(
+        summary="Register New User",
+        description="Registers a new user. By default, the user is assigned the 'Customer' role.",
+        responses={201: UserRegistrationSerializer}
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+
 
 class UserProfileDetailView(APIView):
     """
@@ -33,6 +43,18 @@ class UserProfileDetailView(APIView):
     """
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(
+        summary="Get Smart User Profile",
+        description="""
+        Returns different profile data based on the user's role:
+        - **Contractor**: Returns average rating, completed jobs count, and comments.
+        - **Customer**: Returns personal info and the list of ads created by them.
+        """,
+        responses={
+            200: OpenApiResponse(description="Profile data (Structure depends on user role)"),
+            401: OpenApiResponse(description="Authentication credentials were not provided.")
+        }
+    )
     def get(self, request, pk):
         user = get_object_or_404(User, pk=pk)
 

@@ -30,7 +30,6 @@ class CustomUserAdmin(UserAdmin):
                     'first_name',
                     'last_name',
                     'phone_number',
-                    'role',
                 )
             }
         ),
@@ -70,7 +69,6 @@ class CustomUserAdmin(UserAdmin):
                     'first_name',
                     'last_name',
                     'phone_number',
-                    'role',
                     'password1',
                     'password2',
                     'is_staff',
