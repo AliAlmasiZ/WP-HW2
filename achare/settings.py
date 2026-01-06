@@ -153,6 +153,9 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Achare WP HW2 API',
     'DESCRIPTION': 'Achare Project API Documentation',
     'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SECURITY': [{'Bearer': []}]
 }
 
 SIMPLE_JWT = {
