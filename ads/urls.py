@@ -9,4 +9,5 @@ urlpatterns = [
     path("<int:pk>/assign/", views.AdAssignProviderView.as_view(), name="ad-assign"),
     path("<int:pk>/complete/", views.AdProvideFinishView.as_view(), name="ad-complete"),
     path("<int:pk>/confirm/", views.AdOwnerConfirmView.as_view(), name="ad-confirm"),
+    path("<int:pk>/cancel/", views.AdCancelView.as_view(), name="ad-cancel"),
 ]   

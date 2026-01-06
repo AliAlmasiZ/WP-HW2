@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from .models import Ad
 from .serializers import AdSerializer
 from .permissions import IsOwnerOrReadOnly, HasApplyPermission, HasAssignPermission
+from rest_framework.response import Response
 
 
 class AdListCreateView(generics.ListCreateAPIView):
@@ -172,5 +173,38 @@ class AdOwnerConfirmView(APIView):
         ad.save()
         return Response(
             {'detail': 'Ad marked as done successfully.'},
+            status=status.HTTP_200_OK
+        )
+    
+
+class AdCancelView(APIView):
+    """
+    لغو آگهی توسط مشتری (صاحب آگهی)
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        ad = get_object_or_404(Ad, pk=pk)
+
+        if ad.owner != request.user:
+            return Response(
+                {'detail': 'Only the owner can cancel this ad.'}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        if ad.status == Ad.AdStatus.DONE:
+            return Response(
+                {'detail': 'Cannot cancel a completed ad.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # ۳. تغییر وضعیت به لغو شده
+        ad.status = Ad.AdStatus.CANCELLED
+        # اگر بخواهید لیست متقاضیان را هم پاک کنید:
+        ad.applicants.clear() 
+        ad.save()
+
+        return Response(
+            {'detail': 'Ad cancelled successfully.'},
             status=status.HTTP_200_OK
         )
