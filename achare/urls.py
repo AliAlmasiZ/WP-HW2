@@ -28,7 +28,7 @@ urlpatterns = [
     path('accounts/', include("accounts.urls")),
     path('ads/', include("ads.urls")),
     path('comments/', include("comments.urls")),
-#     path('tickets/', include("tickets.urls")),
+    path('tickets/', include("tickets.urls")),
 ]
 
 

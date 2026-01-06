@@ -13,3 +13,8 @@ class Ticket(models.Model):
     answer = models.TextField("Answer", blank=True, null=True)
     related_ad = models.ForeignKey("ads.Ad", on_delete=models.SET_NULL, related_name="tickets", blank=True, null=True)
     created_at = models.DateTimeField("Created At", auto_now_add=True)
+    class Meta:
+        permissions = [
+            ("can_answer_ticket", "Can answer tickets"),
+            ("can_see_all_tickets", "Can see all tickets"),
+        ]
