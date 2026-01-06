@@ -3,5 +3,6 @@ from . import views
 
 
 urlpatterns = [
-    path("<int:ad_pk>/comment/", views.AdCommentCreateView.as_view(), name="comment-list-create"),
+    path("ad/<int:ad_pk>/", views.AdCommentCreateView.as_view(), name="comment-list-create"),
+    path("contractor/<int:contractor_pk>/", views.ContractorCommentsListView.as_view(), name="contractor-comments-list"),
 ]

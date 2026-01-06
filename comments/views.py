@@ -1,9 +1,11 @@
 from rest_framework.views import APIView
-from rest_framework import permissions, status
+from rest_framework import permissions, status, generics
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from ads.models import Ad
 from .serializers import CommentSerializer
+from .models import Comment
+from django_filters.rest_framework import DjangoFilterBackend
 
 class AdCommentCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -49,3 +51,19 @@ class AdCommentCreateView(APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+class ContractorCommentsListView(generics.ListAPIView):
+    """
+    لیست نظرات یک پیمانکار خاص با قابلیت فیلتر بر اساس امتیاز.
+    مثال: /comments/contractor/5/?rate=5
+    """
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.AllowAny] # دیدن نظرات معمولاً عمومی است
+    
+    # فعال‌سازی فیلتر
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['rate'] # به کاربر اجازه می‌دهیم روی rate فیلتر کند
+
+    def get_queryset(self):
+        contractor_id = self.kwargs.get('contractor_pk')
+        return Comment.objects.filter(provider_id=contractor_id)

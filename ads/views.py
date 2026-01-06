@@ -1,8 +1,9 @@
 from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 from .models import Ad
-from .serializers import AdSerializer
+from .serializers import AdSerializer, AdAssignSerializer
 from .permissions import IsOwnerOrReadOnly, HasApplyPermission, HasAssignPermission
 from rest_framework.response import Response
 
@@ -18,6 +19,18 @@ class AdListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+    @extend_schema(
+        summary="List Ads / Create Ad",
+        description="Retrieve a list of all ads or create a new ad. New ads are set to 'Open' status by default."
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+    @extend_schema(summary="Create a new Ad")
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
 
     
@@ -38,6 +51,11 @@ class AdApplyView(APIView):
 
     permission_classes = [permissions.IsAuthenticated, HasApplyPermission]
 
+    @extend_schema(
+        summary="Apply for an Ad (Contractor)",
+        description="Contractors use this endpoint to add themselves to the applicants list of an open ad.",
+        responses={200: None, 400: None}
+    )
     def post(self, request, pk):
         ad = get_object_or_404(Ad, pk=pk)
 
@@ -54,6 +72,7 @@ class AdApplyView(APIView):
             {'detail': 'Application submitted successfully.'},
             status=status.HTTP_200_OK
         )
+    
     
     def delete(self, request, pk):
         ad = get_object_or_404(Ad, pk=pk)
@@ -80,6 +99,11 @@ class AdAssignProviderView(APIView):
 
     permission_classes = [HasAssignPermission]
 
+    @extend_schema(
+        summary="Assign Provider (Customer)",
+        description="The ad owner selects a provider from the applicants. Ad status changes to 'Assigned'.",
+        request=AdAssignSerializer 
+    )
     def post(self, request, pk):
         """
         assign a provider to the ad
@@ -93,9 +117,11 @@ class AdAssignProviderView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        serlializer = AdSerializer(data=request.data)
-        serlializer.is_valid(raise_exception=True)
-        provider_id = serlializer.validated_data.get('provider_id')
+        serializer = AdAssignSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        provider_id = serializer.validated_data.get('provider_id')
+
+        from accounts.models import User
 
         provider = get_object_or_404(User, pk=provider_id)
 
