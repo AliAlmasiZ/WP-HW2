@@ -24,7 +24,7 @@ class HasApplyPermission(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
 
-        return request.user.has_perm('ads.can_apply')
+        return request.user.has_perm('ads.can_apply') or request.user.is_superuser
     
 
 class HasAssignPermission(permissions.BasePermission):
@@ -36,4 +36,4 @@ class HasAssignPermission(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
 
-        return request.user.has_perm('ads.can_assign')
+        return request.user.has_perm('ads.can_assign') or request.user.is_superuser
