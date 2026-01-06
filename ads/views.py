@@ -121,6 +121,9 @@ class AdAssignProviderView(APIView):
         serializer.is_valid(raise_exception=True)
         provider_id = serializer.validated_data.get('provider_id')
 
+
+        new_location = serializer.validated_data.get('location')
+        new_time = serializer.validated_data.get('scheduled_time')
         from accounts.models import User
 
         provider = get_object_or_404(User, pk=provider_id)
@@ -132,7 +135,13 @@ class AdAssignProviderView(APIView):
             )
         
         ad.provider = provider
-        ad.status = Ad.AdStatus.PENDING
+        ad.status = Ad.AdStatus.ASSIGNED
+
+        if new_location:
+            ad.location = new_location
+        if new_time:
+            ad.scheduled_time = new_time
+
         ad.applicants.clear()
         ad.save()
 

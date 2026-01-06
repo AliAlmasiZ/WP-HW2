@@ -14,4 +14,4 @@ class AdAssignSerializer(serializers.ModelSerializer):
     provider_id = serializers.IntegerField(write_only=True)
     class Meta:
         model = models.Ad
-        fields = ['provider_id']
+        fields = ['provider_id', 'location', 'scheduled_time']

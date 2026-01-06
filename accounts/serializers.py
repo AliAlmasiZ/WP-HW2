@@ -4,6 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth.password_validation import validate_password
 from .models import User
 from comments.serializers import CommentSerializer  
+from django.contrib.auth.models import Group
 
 
 class LoginSerializer(TokenObtainPairSerializer):
@@ -42,6 +43,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', ''),
         )
+        customer_group = Group.objects.get(name='customer')
+        if customer_group:
+            user.groups.add(customer_group)
         return user
 
 
@@ -67,7 +71,7 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
     def get_my_ads(self, obj):
         from ads.serializers import AdSerializer
         from ads.models import Ad
-        
+
         ads = Ad.objects.filter(owner=obj)
         return AdSerializer(ads, many=True).data
     

@@ -23,6 +23,19 @@ class Ad(models.Model):
         verbose_name="Applicants"
     )
 
+
+    location = models.TextField(
+        blank=True, 
+        null=True, 
+        verbose_name="Location"
+    )
+
+    scheduled_time = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Scheduled Time"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
 
     class Meta:
