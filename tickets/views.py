@@ -2,7 +2,7 @@ from rest_framework import generics, permissions
 from .serializers import TicketSerializer, TicketReplySerializer
 from .models import Ticket
 from .permissions import canAnswerTicket, canEditTicket
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 
 class TicketListCreateView(generics.ListCreateAPIView):
     serializer_class = TicketSerializer
@@ -25,6 +25,22 @@ class TicketListCreateView(generics.ListCreateAPIView):
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+    
+    @extend_schema(
+        summary="Create Ticket",
+        examples=[
+            OpenApiExample(
+                'Support Request',
+                value={
+                    "message": "من نمی‌توانم وارد حساب کاربری خود شوم، لطفا راهنمایی کنید.",
+                    "related_ad": 12 
+                },
+                request_only=True,
+            )
+        ]
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
 class TicketDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Ticket.objects.all()

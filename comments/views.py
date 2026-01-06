@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework import permissions, status, generics
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from django.shortcuts import get_object_or_404
 from ads.models import Ad
 from .serializers import CommentSerializer
@@ -9,7 +10,29 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 class AdCommentCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-
+    @extend_schema(
+        summary="Add Comment to Ad",
+        description="Leave a comment and rate the provider after the job is done.",
+        request=CommentSerializer,
+        examples=[
+            OpenApiExample(
+                'Positive Review',
+                value={
+                    "content": "کار بسیار عالی و تمیز انجام شد. ممنونم.",
+                    "rate": 5
+                },
+                request_only=True,
+            ),
+            OpenApiExample(
+                'Negative Review',
+                value={
+                    "content": "با تاخیر آمدند و کیفیت کار پایین بود.",
+                    "rate": 2
+                },
+                request_only=True,
+            )
+        ]
+    )
     def post(self, request, ad_pk):
         """"
         Create a comment for a specific ad.

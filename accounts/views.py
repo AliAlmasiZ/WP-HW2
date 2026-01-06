@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView , TokenRefreshVie
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg, Count, Q
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 import re
 from .serializers import *
 from .filters import ContractorFilter
@@ -30,7 +30,21 @@ class UserRegisterView(generics.CreateAPIView):
     @extend_schema(
         summary="Register New User",
         description="Registers a new user. By default, the user is assigned the 'Customer' role.",
-        responses={201: UserRegistrationSerializer}
+        responses={201: UserRegistrationSerializer},
+        examples=[
+            OpenApiExample(
+                'Customer Registration',
+                value={
+                    "username": "lialm",
+                    "password": "strong_password_123",
+                    "email": "ali@example.com",
+                    "first_name": "Ali",
+                    "last_name": "Almasi",
+                    "phone_number": "09123456789"
+                },
+                request_only=True,
+            )
+        ]
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)

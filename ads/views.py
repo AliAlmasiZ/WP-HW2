@@ -28,7 +28,24 @@ class AdListCreateView(generics.ListCreateAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
     
-    @extend_schema(summary="Create a new Ad")
+    @extend_schema(
+        summary="Create a new Ad",
+        description="Submit a new advertisement request.",
+        request=AdSerializer,
+        examples=[
+            OpenApiExample(
+                'Simple Ad Example',
+                summary='A standard cleaning request',
+                description='Example of a customer requesting house cleaning.',
+                value={
+                    "title": "نظافت منزل ۱۰۰ متری",
+                    "description": "نیاز به نظافت کامل پذیرایی و آشپزخانه دارم.",
+                    "category": "Cleaning",
+                },
+                request_only=True,  
+            ),
+        ]
+    )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
